@@ -3,6 +3,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
 
+// Thêm mock OpenAI
+//jest.mock('openai');
+
+jest.setTimeout(20000);
+
 const TEST_USER_EMAIL = 'guildtestuser@example.com';
 const TEST_USER_PASSWORD = 'test1234';
 
@@ -38,14 +43,14 @@ describe('AiChatController (e2e)', () => {
       .expect(401);
   });
 
-  it('Gửi chat hợp lệ khi có token (mock)', async () => {
-    // Chỉ test mock, không gọi thật Gemini
+  it('Gửi chat hợp lệ khi có token (Gemini API)', async () => {
     const res = await request(app.getHttpServer())
       .post('/aichat/chat')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ messages: [{ role: 'user', content: 'Explain AI' }] })
+      .send({ prompt: 'Explain AI' })
       .expect(200);
-    // Có thể kiểm tra response structure tuỳ config Gemini
     expect(res.body).toBeDefined();
+    expect(res.body.role).toBe('assistant');
+    expect(res.body.content).toBeDefined();
   });
 });

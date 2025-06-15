@@ -12,7 +12,7 @@ Backend xây dựng bằng NestJS, PostgreSQL, Redis, JWT, phân quyền bảo m
 6. Chạy test e2e: `npm run test:e2e`
 
 ## Cấu trúc thư mục chính
-- `src/modules/` - Các module chức năng (auth, quests, guilds, leaderboard...)
+- `src/modules/` - Các module chức năng (auth, quests, guilds, leaderboard, aichat...)
 - `src/entities/` - Entity TypeORM mapping DB
 - `test/` - Test e2e tự động
 - `docs/` - Tài liệu dự án
@@ -42,6 +42,17 @@ Backend xây dựng bằng NestJS, PostgreSQL, Redis, JWT, phân quyền bảo m
 - `GET /leaderboard/global` - Xem bảng xếp hạng tổng
 - `GET /leaderboard/personal` - Xem bảng cá nhân hóa (cần JWT)
 
+### AI Chat (Gemini)
+- `POST /aichat/chat` - Gửi prompt tới Gemini, trả về nội dung assistant
+  - Headers: `Authorization: Bearer <accessToken>`, `Content-Type: application/json`
+  - Body: `{ "prompt": "Explain AI" }`
+  - Response: `{ "role": "assistant", "content": "..." }`
+  - Yêu cầu cấu hình biến môi trường `GEMINI_API_KEY`.
+  - Có thể test thực bằng curl/Postman hoặc e2e.
+
+### Notification
+- Đang phát triển
+
 ## Phân quyền & bảo mật
 - Tất cả route thay đổi dữ liệu đều cần JWT.
 - Chỉ creator/owner/admin được phép thao tác nâng cao.
@@ -50,6 +61,28 @@ Backend xây dựng bằng NestJS, PostgreSQL, Redis, JWT, phân quyền bảo m
 ## Kiểm thử tự động
 - Chạy toàn bộ test: `npm run test:e2e`
 - Test từng module: `npm run test:e2e -- test/tenfile.e2e-spec.ts`
+
+## Hướng dẫn sử dụng nhanh API AI Chat (Gemini)
+1. Đăng nhập lấy accessToken:
+   ```
+   POST /auth/login
+   { "email": "guildtestuser@example.com", "password": "test1234" }
+   => { "accessToken": "..." }
+   ```
+2. Gửi prompt:
+   ```
+   POST /aichat/chat
+   Headers: Authorization: Bearer <accessToken>
+   Body: { "prompt": "Explain AI" }
+   => { "role": "assistant", "content": "..." }
+   ```
+3. Test nhanh bằng curl:
+   ```
+   curl -X POST http://localhost:3000/aichat/chat \
+     -H "Authorization: Bearer <accessToken>" \
+     -H "Content-Type: application/json" \
+     -d '{"prompt": "Explain AI"}'
+   ```
 
 ## Liên hệ & đóng góp
 - Đọc thêm trong từng file docs/ hoặc liên hệ nhóm phát triển.

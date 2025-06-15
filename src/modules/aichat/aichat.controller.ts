@@ -1,23 +1,20 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { CurrentUser } from '../auth/current-user.decorator';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { AiChatService } from './aichat.service';
+import { GeminiChatRequestDto } from './dto/gemini-chat-request.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-@Controller('aichat')
+@ApiTags('AI Chat')
+@ApiBearerAuth('AUTHORIZATION-JWT')
 @UseGuards(JwtAuthGuard)
+@Controller('aichat')
 export class AiChatController {
-  constructor(private readonly aiChatService: AiChatService) {}
+  constructor(private readonly service: AiChatService) {}
 
   @Post('chat')
-  async chat(
-    @CurrentUser() user: any,
-    @Body('messages') messages: { role: string; content: string }[]
+  async generateResponse(
+    @Body() request: GeminiChatRequestDto,
   ) {
-    // Chuyển role về đúng type cho OpenAI SDK
-    const safeMessages = messages.map(m => ({
-      role: m.role as 'system' | 'user' | 'assistant',
-      content: m.content,
-    }));
-    return this.aiChatService.chat(safeMessages);
+    return this.service.chatCompletion(request);
   }
 }
