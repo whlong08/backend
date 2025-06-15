@@ -9,6 +9,7 @@ import { LeaderboardModule } from './modules/leaderboard/leaderboard.module';
 import { AiChatModule } from './modules/aichat/aichat.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { ChatModule } from './modules/chat/chat.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ChatModule } from './modules/chat/chat.module';
     AiChatModule,
     NotificationModule,
     ChatModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

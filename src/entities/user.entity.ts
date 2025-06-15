@@ -37,4 +37,7 @@ export class User {
 
   @Column({ name: 'last_active', type: 'timestamp with time zone', default: () => 'CURRENT_TIMESTAMP' })
   lastActive: Date;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  subject?: string;
 }
