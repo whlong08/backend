@@ -32,7 +32,7 @@ import { Notification } from '../entities/notification.entity';
           Friendship,
           AiChatSession,
           AiChatMessage,
-          Notification
+          Notification,
         ],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',

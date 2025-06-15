@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 export enum NotificationType {
+  SYSTEM = 'system',
   FRIEND_REQUEST = 'friend_request',
   QUEST_COMPLETED = 'quest_completed',
   GUILD_INVITE = 'guild_invite',
