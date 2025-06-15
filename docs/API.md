@@ -50,6 +50,29 @@ Backend xây dựng bằng NestJS, PostgreSQL, Redis, JWT, phân quyền bảo m
   - Yêu cầu cấu hình biến môi trường `GEMINI_API_KEY`.
   - Có thể test thực bằng curl/Postman hoặc e2e.
 
+### Chat (Realtime)
+- `POST /chat/send` - Gửi tin nhắn (guild/friend)
+  - Body: `{ type: 'GUILD'|'FRIEND', guildId?, friendId?, senderId, content }`
+  - Response: `{ id, type, guildId, friendId, senderId, content, createdAt }`
+- `GET /chat/guild?guildId=...` - Lấy lịch sử chat guild
+- `GET /chat/friend?friendId=...` - Lấy lịch sử chat bạn bè
+
+#### WebSocket (socket.io)
+- Kết nối: `ws://<host>:<port>`
+- Sự kiện:
+  - `sendMessage` (client → server): `{ type, guildId?, friendId?, senderId, content }`
+  - `newMessage` (server → client): `{ ...ChatMessage }`
+  - `joinGuild` (client → server): `guildId`
+  - `joinFriend` (client → server): `friendId`
+
+#### Ví dụ sử dụng socket.io-client:
+```js
+const socket = io('http://localhost:3000');
+socket.emit('joinGuild', 'guild-123');
+socket.emit('sendMessage', { type: 'GUILD', guildId: 'guild-123', senderId: 'user1', content: 'Hi!' });
+socket.on('newMessage', msg => console.log(msg));
+```
+
 ### Notification
 - Đang phát triển
 

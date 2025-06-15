@@ -8,6 +8,7 @@ import { GuildsModule } from './modules/guilds/guilds.module';
 import { LeaderboardModule } from './modules/leaderboard/leaderboard.module';
 import { AiChatModule } from './modules/aichat/aichat.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { NotificationModule } from './modules/notification/notification.module';
     LeaderboardModule,
     AiChatModule,
     NotificationModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

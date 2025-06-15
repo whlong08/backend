@@ -9,6 +9,7 @@ import { Guild, GuildMember } from '../entities/guild.entity';
 import { Friendship } from '../entities/friendship.entity';
 import { AiChatSession, AiChatMessage } from '../entities/ai-chat.entity';
 import { Notification } from '../entities/notification.entity';
+import { ChatMessage } from '../entities/chat-message.entity';
 
 @Global()
 @Module({
@@ -33,6 +34,7 @@ import { Notification } from '../entities/notification.entity';
           AiChatSession,
           AiChatMessage,
           Notification,
+          ChatMessage,
         ],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
