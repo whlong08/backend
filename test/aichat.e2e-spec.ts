@@ -29,7 +29,7 @@ describe('AiChatController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     await app.init();
-    accessToken = await loginAndGetToken(app);
+    accessToken = await loginAndGetToken(app); // Đăng nhập lấy accessToken động
   });
 
   afterAll(async () => {
