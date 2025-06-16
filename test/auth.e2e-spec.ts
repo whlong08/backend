@@ -11,6 +11,7 @@ describe('AuthController (e2e)', () => {
     username: `e2e_testuser_${random}`,
     password: 'test1234',
   };
+  let refreshToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -52,12 +53,22 @@ describe('AuthController (e2e)', () => {
     expect(res.body).toHaveProperty('accessToken');
     expect(res.body).toHaveProperty('refreshToken');
     expect(res.body.user).toHaveProperty('email', testUser.email);
+    refreshToken = res.body.refreshToken;
   });
 
-  it('/auth/login (POST) - wrong password', async () => {
+  it('/auth/refresh (POST) - success', async () => {
+    const res = await request(app.getHttpServer())
+      .post('/auth/refresh')
+      .send({ refreshToken })
+      .expect(201);
+    expect(res.body).toHaveProperty('accessToken');
+    expect(typeof res.body.accessToken).toBe('string');
+  });
+
+  it('/auth/refresh (POST) - fail with wrong token', async () => {
     await request(app.getHttpServer())
-      .post('/auth/login')
-      .send({ email: testUser.email, password: 'wrongpass' })
+      .post('/auth/refresh')
+      .send({ refreshToken: 'invalidtoken' })
       .expect(401);
   });
 });

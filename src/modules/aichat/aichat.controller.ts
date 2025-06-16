@@ -2,10 +2,10 @@ import { Body, Controller, Post, UseGuards, Headers, Logger } from '@nestjs/comm
 import { AiChatService } from './aichat.service';
 import { GeminiChatRequestDto } from './dto/gemini-chat-request.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags, ApiBody } from '@nestjs/swagger';
 
 @ApiTags('AI Chat')
-@ApiBearerAuth('AUTHORIZATION-JWT')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('aichat')
 export class AiChatController {
@@ -13,6 +13,7 @@ export class AiChatController {
   constructor(private readonly service: AiChatService) {}
 
   @Post('chat')
+  @ApiBody({ type: GeminiChatRequestDto })
   async generateResponse(
     @Body() request: GeminiChatRequestDto,
     @Headers() headers: any

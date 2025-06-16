@@ -21,6 +21,10 @@ Backend xây dựng bằng NestJS, PostgreSQL, Redis, JWT, phân quyền bảo m
 ### Auth
 - `POST /auth/register` - Đăng ký tài khoản
 - `POST /auth/login` - Đăng nhập, trả về accessToken, refreshToken
+- `POST /auth/refresh` - Nhận accessToken mới từ refreshToken (khi accessToken hết hạn)
+  - Body: `{ "refreshToken": "<refresh_token>" }`
+  - Response: `{ "accessToken": "..." }`
+  - Lỗi: 401 nếu refreshToken không hợp lệ hoặc hết hạn
 
 ### Quests
 - `GET /quests` - Lấy danh sách quest (public)

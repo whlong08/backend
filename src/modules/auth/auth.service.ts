@@ -56,4 +56,27 @@ export class AuthService {
     const { passwordHash, ...rest } = user;
     return rest;
   }
+
+  async refreshToken(refreshToken: string) {
+    try {
+      // Giải mã refreshToken
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+      const userId = payload.sub;
+      // Lấy refreshToken từ Redis
+      const storedToken = await this.redisClient.get(`refresh_token:${userId}`);
+      if (!storedToken || storedToken !== refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+      // Cấp accessToken mới
+      const accessToken = await this.jwtService.signAsync({ sub: userId }, {
+        secret: this.configService.get<string>('JWT_SECRET'),
+        expiresIn: '15m',
+      });
+      return { accessToken };
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
 }
