@@ -1,14 +1,15 @@
-import { Controller, Get, Post, Body, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatType } from '../../entities/chat-message.entity';
+import { SendChatMessageDto } from './dto/send-chat-message.dto';
 
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post('send')
-  async sendMessage(@Body() body: any) {
-    // TODO: validate body
+  @UsePipes(new ValidationPipe({ whitelist: true }))
+  async sendMessage(@Body() body: SendChatMessageDto) {
     return this.chatService.sendMessage(body);
   }
 
