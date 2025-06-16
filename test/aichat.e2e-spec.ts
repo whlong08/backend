@@ -39,7 +39,7 @@ describe('AiChatController (e2e)', () => {
   it('Cấm truy cập nếu không có token', async () => {
     await request(app.getHttpServer())
       .post('/aichat/chat')
-      .send({ messages: [{ role: 'user', content: 'Hello' }] })
+      .send({ prompt: 'Hello' })
       .expect(401);
   });
 
@@ -47,7 +47,7 @@ describe('AiChatController (e2e)', () => {
     const res = await request(app.getHttpServer())
       .post('/aichat/chat')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ prompt: 'Explain AI' })
+      .send({ prompt: 'Giới thiệu bản thân bạn bằng 2 câu' })
       .expect(200);
     expect(res.body).toBeDefined();
     expect(res.body.role).toBe('assistant');

@@ -6,6 +6,13 @@ import { AppModule } from '../src/app.module';
 describe('GuildsController (e2e)', () => {
   let app: INestApplication;
   let createdId: string;
+  let accessToken: string;
+  const random = Math.floor(Math.random() * 1000000);
+  const testUser = {
+    email: `guild_e2e_${random}@example.com`,
+    username: `guild_e2e_user_${random}`,
+    password: 'test1234',
+  };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -14,6 +21,17 @@ describe('GuildsController (e2e)', () => {
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     await app.init();
+
+    // Đăng ký và đăng nhập user test
+    await request(app.getHttpServer())
+      .post('/auth/register')
+      .send(testUser)
+      .expect(201);
+    const loginRes = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ username: testUser.username, password: testUser.password })
+      .expect(201);
+    accessToken = loginRes.body.accessToken;
   });
 
   afterAll(async () => {
@@ -21,7 +39,7 @@ describe('GuildsController (e2e)', () => {
   });
 
   const guildData = {
-    name: 'Test Guild',
+    name: `Test Guild ${random}`,
     description: 'Guild for e2e testing',
     avatarUrl: 'http://example.com/avatar.png',
     ownerId: null,
@@ -34,6 +52,7 @@ describe('GuildsController (e2e)', () => {
   it('/guilds (POST) - create', async () => {
     const res = await request(app.getHttpServer())
       .post('/guilds')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send(guildData)
       .expect(201);
     expect(res.body).toHaveProperty('id');
@@ -44,6 +63,7 @@ describe('GuildsController (e2e)', () => {
   it('/guilds (GET) - findAll', async () => {
     const res = await request(app.getHttpServer())
       .get('/guilds')
+      .set('Authorization', `Bearer ${accessToken}`)
       .expect(200);
     expect(Array.isArray(res.body)).toBe(true);
     expect(res.body.length).toBeGreaterThan(0);
@@ -52,6 +72,7 @@ describe('GuildsController (e2e)', () => {
   it('/guilds/:id (GET) - findOne', async () => {
     const res = await request(app.getHttpServer())
       .get(`/guilds/${createdId}`)
+      .set('Authorization', `Bearer ${accessToken}`)
       .expect(200);
     expect(res.body).toHaveProperty('id', createdId);
   });
@@ -59,6 +80,7 @@ describe('GuildsController (e2e)', () => {
   it('/guilds/:id (PATCH) - update', async () => {
     const res = await request(app.getHttpServer())
       .patch(`/guilds/${createdId}`)
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({ name: 'Updated Guild' })
       .expect(200);
     expect(res.body.name).toBe('Updated Guild');
@@ -67,6 +89,7 @@ describe('GuildsController (e2e)', () => {
   it('/guilds/:id (DELETE) - remove', async () => {
     await request(app.getHttpServer())
       .delete(`/guilds/${createdId}`)
+      .set('Authorization', `Bearer ${accessToken}`)
       .expect(200);
   });
 });

@@ -32,6 +32,7 @@ describe('GuildMembersController (e2e, security)', () => {
     const uniqueGuildName = 'Guild for security test ' + Date.now();
     const res = await request(app.getHttpServer())
       .post('/guilds')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({ name: uniqueGuildName, ownerId: TEST_USER_ID })
       .expect(201);
     guildId = res.body.id;
@@ -58,9 +59,15 @@ describe('GuildMembersController (e2e, security)', () => {
     const uniqueGuildName = 'Guild for forbidden test ' + Date.now();
     const res = await request(app.getHttpServer())
       .post('/guilds')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({ name: uniqueGuildName })
       .expect(201);
     const newGuildId = res.body.id;
+    // Xóa user test khỏi guild_members nếu có
+    await request(app.getHttpServer())
+      .delete(`/guilds/${newGuildId}/members/${TEST_USER_ID}`)
+      .set('Authorization', `Bearer ${accessToken}`);
+    // Kiểm tra truy cập
     await request(app.getHttpServer())
       .get(`/guilds/${newGuildId}/members`)
       .set('Authorization', `Bearer ${accessToken}`)

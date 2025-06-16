@@ -5,6 +5,12 @@ import { AppModule } from '../src/app.module';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
+  const random = Math.floor(Math.random() * 1000000);
+  const testUser = {
+    email: `e2e_test_${random}@example.com`,
+    username: `e2e_testuser_${random}`,
+    password: 'test1234',
+  };
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -19,12 +25,6 @@ describe('AuthController (e2e)', () => {
   afterAll(async () => {
     await app.close();
   });
-
-  const testUser = {
-    email: 'e2e_test@example.com',
-    username: 'e2e_testuser',
-    password: 'test1234',
-  };
 
   it('/auth/register (POST) - success', async () => {
     const res = await request(app.getHttpServer())
