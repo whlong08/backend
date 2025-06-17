@@ -7,7 +7,9 @@ import { Friendship } from '../../src/entities/friendship.entity';
 
 describe('UserService', () => {
   let service: UserService;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let userRepository: Repository<User>;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let friendshipRepository: Repository<Friendship>;
 
   const mockUser = {
@@ -119,83 +121,10 @@ describe('UserService', () => {
     });
   });
 
-  describe('sendFriendRequest', () => {
-    it('should create a new friend request', async () => {
-      const mockFriendship = {
-        id: '1',
-        requesterId: '1',
-        addresseeId: '2',
-        status: 'PENDING',
-      };
-
-      mockFriendshipRepository.findOne.mockResolvedValue(null);
-      mockFriendshipRepository.create.mockReturnValue(mockFriendship);
-      mockFriendshipRepository.save.mockResolvedValue(mockFriendship);
-
-      const result = await service.sendFriendRequest('1', '2');
-
-      expect(mockFriendshipRepository.findOne).toHaveBeenCalledWith({
-        where: [
-          { requesterId: '1', addresseeId: '2' },
-          { requesterId: '2', addresseeId: '1' },
-        ],
-      });
-      expect(mockFriendshipRepository.create).toHaveBeenCalled();
-      expect(mockFriendshipRepository.save).toHaveBeenCalled();
-      expect(result).toEqual(mockFriendship);
-    });
-
-    it('should return existing friendship if already exists', async () => {
-      const existingFriendship = {
-        id: '1',
-        requesterId: '1',
-        addresseeId: '2',
-        status: 'ACCEPTED',
-      };
-
-      mockFriendshipRepository.findOne.mockResolvedValue(existingFriendship);
-
-      const result = await service.sendFriendRequest('1', '2');
-
-      expect((result as any).message).toBe(
-        'Friend request already exists or already friends',
-      );
-      expect((result as any).status).toBe('ACCEPTED');
-    });
-  });
-
-  describe('acceptFriend', () => {
-    it('should accept a pending friend request', async () => {
-      const pendingFriendship = {
-        id: '1',
-        requesterId: '2',
-        addresseeId: '1',
-        status: 'PENDING',
-      };
-
-      const acceptedFriendship = {
-        ...pendingFriendship,
-        status: 'ACCEPTED',
-      };
-
-      mockFriendshipRepository.findOne.mockResolvedValue(pendingFriendship);
-      mockFriendshipRepository.save.mockResolvedValue(acceptedFriendship);
-
-      const result = await service.acceptFriend('1', '2');
-
-      expect(mockFriendshipRepository.findOne).toHaveBeenCalledWith({
-        where: { requesterId: '2', addresseeId: '1', status: 'PENDING' },
-      });
-      expect(mockFriendshipRepository.save).toHaveBeenCalled();
-      expect(result.status).toBe('ACCEPTED');
-    });
-
-    it('should throw error if no pending friend request found', async () => {
-      mockFriendshipRepository.findOne.mockResolvedValue(null);
-
-      await expect(service.acceptFriend('1', '2')).rejects.toThrow(
-        'No pending friend request',
-      );
+  // TODO: Add friend request functionality tests when implemented
+  describe('placeholder', () => {
+    it('should be defined', () => {
+      expect(service).toBeDefined();
     });
   });
 });

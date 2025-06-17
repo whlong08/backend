@@ -83,9 +83,9 @@ export class AuthService {
   async refreshToken(refreshToken: string) {
     try {
       // Giải mã refreshToken
-      const payload = (await this.jwtService.verifyAsync(refreshToken, {
+      const payload = await this.jwtService.verifyAsync(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      })) as { sub: string };
+      });
       const userId = payload.sub;
       // Lấy refreshToken từ Redis
       const storedToken = await this.redisClient.get(`refresh_token:${userId}`);

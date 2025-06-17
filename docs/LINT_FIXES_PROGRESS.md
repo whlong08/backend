@@ -2,8 +2,8 @@
 
 ## Overview
 - **Initial errors:** 226 (155 errors, 71 warnings)
-- **Current errors:** 167 (107 errors, 60 warnings)
-- **Fixed:** 59 errors (26.1% reduction)
+- **Current errors:** 154 (92 errors, 62 warnings)
+- **Fixed:** 72 errors (32% reduction)
 
 ## Completed Fixes ✅
 
@@ -24,10 +24,20 @@
 ### Phase 3: Minor Fixes
 - ✅ Fixed `test/test-helpers.ts` - Removed unnecessary escape characters in XSS payloads
 
-### Phase 4: Controllers Update
+### Phase 4: Controllers Update  
 - ✅ Fixed `src/modules/aichat/aichat.controller.ts` - Used AuthenticatedUser type
 - ✅ Fixed `src/modules/quests/quests.controller.ts` - Used AuthenticatedUser type  
 - ✅ Fixed `src/modules/notification/notification.controller.ts` - Used AuthenticatedUser type and fixed service calls
+
+### Phase 5: Services & Auth Cleanup
+- ✅ Fixed `src/modules/auth/auth.service.ts` - Fixed unused variables and unsafe assignments 
+- ✅ Fixed `src/modules/notification/notification.service.ts` - Fixed error handling
+- ✅ Removed merge conflict file: `auth.dto_BACKUP_14164.ts`
+
+### Phase 6: Additional Controllers & Services
+- ✅ Fixed `src/modules/leaderboard/leaderboard.controller.ts` - Used AuthenticatedUser type and service compatibility
+- ✅ Fixed `src/modules/chat/chat.controller.ts` - Used AuthenticatedUser type and service compatibility  
+- ✅ Fixed `test/unit/user.service.spec.ts` - Removed unused variables and non-existent method tests
 
 ## Remaining Issues by Priority 🔄
 

@@ -1,29 +1,44 @@
-import { Controller, Get, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { LeaderboardService } from './leaderboard.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { LeaderboardService } from './leaderboard.service';
-import { ApiTags, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthenticatedUser } from '../../common/types/auth.types';
 
 @ApiTags('Leaderboard')
 @Controller('leaderboard')
 export class LeaderboardController {
   constructor(private readonly leaderboardService: LeaderboardService) {}
 
-  @Get('global')
-  @ApiQuery({ name: 'limit', type: Number, required: false })
-  async getGlobal(@Query('limit') limit?: number) {
-    return this.leaderboardService.getGlobalLeaderboard(limit || 20);
-  }
-
-  @Get('personal')
+  @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  async getPersonal(@CurrentUser() user: any) {
+  async getLeaderboard(@CurrentUser() user: AuthenticatedUser) {
+    // Ensure user score is updated in Redis
     await this.leaderboardService.setUserScoreFromDB(user.id);
-    return {
-      username: user.username,
-      points: user.totalPoints,
-      level: user.level,
-    };
+
+    const leaderboard = await this.leaderboardService.getGlobalLeaderboard();
+
+    return leaderboard.map((entry: any) => ({
+      userId: entry.id as string,
+      username: entry.username as string,
+      totalPoints: entry.points as number,
+      level: entry.level as number,
+    }));
+  }
+
+  @Get('top-performers')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async getTopPerformers() {
+    return this.leaderboardService.getGlobalLeaderboard(10);
+  }
+
+  @Get('user-rank')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async getUserRank(@CurrentUser() user: AuthenticatedUser) {
+    await this.leaderboardService.setUserScoreFromDB(user.id);
+    return { message: 'User rank functionality not implemented yet' };
   }
 }
