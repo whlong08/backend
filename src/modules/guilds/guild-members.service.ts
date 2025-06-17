@@ -7,11 +7,19 @@ import { GuildMember, GuildRole } from '../../entities/guild.entity';
 export class GuildMembersService {
   constructor(
     @InjectRepository(GuildMember)
-    private guildMembersRepository: Repository<GuildMember>
+    private guildMembersRepository: Repository<GuildMember>,
   ) {}
 
-  async addMember(guildId: string, userId: string, role: GuildRole = GuildRole.MEMBER) {
-    const member = this.guildMembersRepository.create({ guildId, userId, role });
+  async addMember(
+    guildId: string,
+    userId: string,
+    role: GuildRole = GuildRole.MEMBER,
+  ) {
+    const member = this.guildMembersRepository.create({
+      guildId,
+      userId,
+      role,
+    });
     return this.guildMembersRepository.save(member);
   }
 
@@ -20,7 +28,9 @@ export class GuildMembersService {
   }
 
   async updateRole(guildId: string, userId: string, role: GuildRole) {
-    const member = await this.guildMembersRepository.findOne({ where: { guildId, userId } });
+    const member = await this.guildMembersRepository.findOne({
+      where: { guildId, userId },
+    });
     if (!member) throw new NotFoundException('Member not found');
     member.role = role;
     return this.guildMembersRepository.save(member);
@@ -28,5 +38,19 @@ export class GuildMembersService {
 
   async listMembers(guildId: string) {
     return this.guildMembersRepository.find({ where: { guildId } });
+  }
+
+  async getGuildIdsByUser(userId: string): Promise<string[]> {
+    const memberships = await this.guildMembersRepository.find({
+      where: { userId },
+    });
+    return memberships.map((m) => m.guildId);
+  }
+
+  async isMember(guildId: string, userId: string): Promise<boolean> {
+    const member = await this.guildMembersRepository.findOne({
+      where: { guildId, userId },
+    });
+    return !!member;
   }
 }

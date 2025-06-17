@@ -9,7 +9,7 @@ export class GuildsService {
     @InjectRepository(Guild)
     private guildsRepository: Repository<Guild>,
     @InjectRepository(GuildMember)
-    private guildMembersRepository: Repository<GuildMember>
+    private guildMembersRepository: Repository<GuildMember>,
   ) {}
 
   async create(data: Partial<Guild>): Promise<Guild> {
@@ -35,6 +35,11 @@ export class GuildsService {
     const guild = await this.guildsRepository.findOne({ where: { id } });
     if (!guild) throw new NotFoundException('Guild not found');
     return guild;
+  }
+
+  async findByIds(ids: string[]): Promise<Guild[]> {
+    if (!ids.length) return [];
+    return this.guildsRepository.findByIds(ids);
   }
 
   async update(id: string, data: Partial<Guild>): Promise<Guild> {

@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export enum FriendshipStatus {
   PENDING = 'pending',
@@ -17,7 +23,11 @@ export class Friendship {
   @Column({ name: 'addressee_id', type: 'uuid' })
   addresseeId: string;
 
-  @Column({ type: 'enum', enum: FriendshipStatus, default: FriendshipStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: FriendshipStatus,
+    default: FriendshipStatus.PENDING,
+  })
   status: FriendshipStatus;
 
   @CreateDateColumn({ name: 'created_at' })

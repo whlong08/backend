@@ -3,17 +3,11 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
 
-function uniqueStr() {
-  return Date.now() + '_' + Math.floor(Math.random() * 1000000);
-}
-
-describe('User Module (e2e)', () => {
+describe('Leaderboard Module (e2e)', () => {
   let app: INestApplication;
   let accessToken: string;
-  let userId: string;
-  const uniq = uniqueStr();
-  const testEmail = `e2e_user_${uniq}@example.com`;
-  const testUsername = `e2euser_${uniq}`;
+  const testEmail = 'e2e_leader_' + Date.now() + '@example.com';
+  const testUsername = 'e2eleader_' + Date.now();
   const testPassword = 'test1234';
 
   beforeAll(async () => {
@@ -33,28 +27,26 @@ describe('User Module (e2e)', () => {
       .post('/auth/login')
       .send({ email: testEmail, password: testPassword });
     accessToken = loginRes.body.accessToken;
-    userId = loginRes.body.user?.id;
   });
 
   afterAll(async () => {
     await app.close();
   });
 
-  it('/user/profile (GET) - get profile', async () => {
-    const res = await request(app.getHttpServer())
-      .get('/user/profile')
-      .set('Authorization', `Bearer ${accessToken}`);
+  it('/leaderboard/global (GET) - get global leaderboard', async () => {
+    const res = await request(app.getHttpServer()).get(
+      '/leaderboard/global?limit=10',
+    );
     expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty('id');
-    expect(res.body).toHaveProperty('email');
+    expect(Array.isArray(res.body)).toBe(true);
   });
 
-  it('/user/profile (PATCH) - update profile', async () => {
+  it('/leaderboard/personal (GET) - get personal leaderboard', async () => {
     const res = await request(app.getHttpServer())
-      .patch('/user/profile')
-      .set('Authorization', `Bearer ${accessToken}`)
-      .send({ bio: 'E2E test bio' });
-    expect([200, 201]).toContain(res.status);
-    expect(res.body).toHaveProperty('bio', 'E2E test bio');
+      .get('/leaderboard/personal')
+      .set('Authorization', `Bearer ${accessToken}`);
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty('username');
+    expect(res.body).toHaveProperty('points');
   });
 });

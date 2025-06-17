@@ -16,7 +16,10 @@ export class ChatGateway {
   constructor(private readonly chatService: ChatService) {}
 
   @SubscribeMessage('sendMessage')
-  async handleMessage(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
+  async handleMessage(
+    @MessageBody() data: any,
+    @ConnectedSocket() client: Socket,
+  ) {
     const message = await this.chatService.sendMessage(data);
     // Broadcast to relevant room (guild/friend)
     if (message.type === 'GUILD') {
@@ -28,12 +31,18 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('joinGuild')
-  handleJoinGuild(@MessageBody() guildId: string, @ConnectedSocket() client: Socket) {
+  handleJoinGuild(
+    @MessageBody() guildId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
     client.join(`guild_${guildId}`);
   }
 
   @SubscribeMessage('joinFriend')
-  handleJoinFriend(@MessageBody() friendId: string, @ConnectedSocket() client: Socket) {
+  handleJoinFriend(
+    @MessageBody() friendId: string,
+    @ConnectedSocket() client: Socket,
+  ) {
     client.join(`friend_${friendId}`);
   }
 }

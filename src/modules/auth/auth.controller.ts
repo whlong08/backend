@@ -23,7 +23,9 @@ export class AuthController {
   @Post('refresh')
   @ApiBody({ type: RefreshTokenDto })
   async refresh(@Body() body: RefreshTokenDto) {
-    if (!body.refreshToken) throw new UnauthorizedException('Missing refresh token');
+    console.log('Refresh token request body:', body);
+    if (!body.refreshToken)
+      throw new UnauthorizedException('Missing refresh token');
     return this.authService.refreshToken(body.refreshToken);
   }
 }

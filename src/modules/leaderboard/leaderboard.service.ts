@@ -25,16 +25,20 @@ export class LeaderboardService {
     // Lấy thông tin user từ DB
     const users = await this.userRepo.findByIds(userIds);
     // Trả về theo thứ tự điểm
-    return userIds.map(id => {
-      const user = users.find(u => u.id === id);
-      return user ? {
-        id: user.id,
-        username: user.username,
-        avatarUrl: user.avatarUrl,
-        points: user.totalPoints,
-        level: user.level,
-      } : null;
-    }).filter(Boolean);
+    return userIds
+      .map((id) => {
+        const user = users.find((u) => u.id === id);
+        return user
+          ? {
+              id: user.id,
+              username: user.username,
+              avatarUrl: user.avatarUrl,
+              points: user.totalPoints,
+              level: user.level,
+            }
+          : null;
+      })
+      .filter(Boolean);
   }
 
   async setUserScoreFromDB(userId: string) {

@@ -23,7 +23,10 @@ export class ChatService {
     });
   }
 
-  async getFriendMessages(friendId: string, limit = 50): Promise<ChatMessage[]> {
+  async getFriendMessages(
+    friendId: string,
+    limit = 50,
+  ): Promise<ChatMessage[]> {
     return this.chatRepository.find({
       where: { friendId, type: ChatType.FRIEND },
       order: { createdAt: 'DESC' },

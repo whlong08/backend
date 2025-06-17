@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 export enum UserQuestStatus {
   NOT_STARTED = 'not_started',
@@ -19,16 +19,28 @@ export class UserQuest {
   @Column({ name: 'quest_id', type: 'uuid' })
   questId: string;
 
-  @Column({ type: 'enum', enum: UserQuestStatus, default: UserQuestStatus.NOT_STARTED })
+  @Column({
+    type: 'enum',
+    enum: UserQuestStatus,
+    default: UserQuestStatus.NOT_STARTED,
+  })
   status: UserQuestStatus;
 
   @Column({ type: 'int', default: 0 })
   progress: number;
 
-  @Column({ name: 'started_at', type: 'timestamp with time zone', nullable: true })
+  @Column({
+    name: 'started_at',
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
   startedAt?: Date;
 
-  @Column({ name: 'completed_at', type: 'timestamp with time zone', nullable: true })
+  @Column({
+    name: 'completed_at',
+    type: 'timestamp with time zone',
+    nullable: true,
+  })
   completedAt?: Date;
 
   @Column({ name: 'submission_data', type: 'jsonb', nullable: true })

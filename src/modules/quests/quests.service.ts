@@ -7,16 +7,39 @@ import { Quest } from '../../entities/quest.entity';
 export class QuestsService {
   constructor(
     @InjectRepository(Quest)
-    private questsRepository: Repository<Quest>
+    private questsRepository: Repository<Quest>,
   ) {}
 
   async create(data: Partial<Quest>): Promise<Quest> {
-    const quest = this.questsRepository.create(data);
+    const questData = {
+      title: data.title,
+      description: data.description,
+      type: data.type,
+      difficulty: data.difficulty,
+      category: data.category,
+      rewardPoints: data.rewardPoints ?? 0,
+      rewardExperience: data.rewardExperience ?? 0,
+      rewardBadges: data.rewardBadges ?? [],
+      requirements: data.requirements ?? {},
+      creatorId: data.creatorId,
+      isPublic: data.isPublic ?? true,
+      isActive: data.isActive ?? true,
+    };
+
+    console.log('Quest data before save:', questData);
+    const quest = this.questsRepository.create(questData);
     return this.questsRepository.save(quest);
   }
 
   async findAll(): Promise<Quest[]> {
     return this.questsRepository.find();
+  }
+
+  async findAllWithPrivate(userId: string): Promise<Quest[]> {
+    // Trả về quest public hoặc quest private của user
+    return this.questsRepository.find({
+      where: [{ isPublic: true }, { isPublic: false, creatorId: userId }],
+    });
   }
 
   async findOne(id: string): Promise<Quest> {

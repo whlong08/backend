@@ -1,9 +1,22 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, ForbiddenException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  UseGuards,
+  ForbiddenException,
+  Req,
+} from '@nestjs/common';
 import { QuestsService } from './quests.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { CreateQuestDto, UpdateQuestDto } from './dto/quest.dto';
 import { ApiBearerAuth, ApiBody, ApiTags, ApiParam } from '@nestjs/swagger';
+import { Request } from 'express';
+import { AuthenticatedUser } from '../../common/types/auth.types';
 
 @ApiTags('Quests')
 @Controller('quests')
@@ -14,19 +27,32 @@ export class QuestsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiBody({ type: CreateQuestDto })
-  create(@Body() body: CreateQuestDto, @CurrentUser() user: any) {
+  create(@Body() body: CreateQuestDto, @CurrentUser() user: AuthenticatedUser) {
+    console.log('CreateQuestDto body:', body);
     return this.questsService.create({ ...body, creatorId: user.id });
   }
 
   @Get()
-  findAll() {
-    return this.questsService.findAll();
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  async findAll(@Req() req: Request) {
+    const user = req.user as AuthenticatedUser;
+    return this.questsService.findAllWithPrivate(user.id);
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String })
-  findOne(@Param('id') id: string) {
-    return this.questsService.findOne(id);
+  async findOne(@Param('id') id: string, @Req() req: Request) {
+    const user = req.user as AuthenticatedUser;
+    const quest = await this.questsService.findOne(id);
+    if (!quest.isPublic && quest.creatorId !== user.id) {
+      throw new ForbiddenException(
+        'You are not allowed to view this private quest',
+      );
+    }
+    return quest;
   }
 
   @Patch(':id')
@@ -34,7 +60,11 @@ export class QuestsController {
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String })
   @ApiBody({ type: UpdateQuestDto })
-  async update(@Param('id') id: string, @Body() body: UpdateQuestDto, @CurrentUser() user: any) {
+  async update(
+    @Param('id') id: string,
+    @Body() body: UpdateQuestDto,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
     const quest = await this.questsService.findOne(id);
     if (quest.creatorId !== user.id) {
       throw new ForbiddenException('Only creator can update this quest');
@@ -46,7 +76,10 @@ export class QuestsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiParam({ name: 'id', type: String })
-  async remove(@Param('id') id: string, @CurrentUser() user: any) {
+  async remove(
+    @Param('id') id: string,
+    @CurrentUser() user: AuthenticatedUser,
+  ) {
     const quest = await this.questsService.findOne(id);
     if (quest.creatorId !== user.id) {
       throw new ForbiddenException('Only creator can delete this quest');
