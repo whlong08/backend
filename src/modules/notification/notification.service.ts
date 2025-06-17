@@ -34,8 +34,8 @@ export class NotificationService {
     } catch (error) {
       this.logger.error(
         'Create notification error',
-        error?.message,
-        error?.stack,
+        error instanceof Error ? error.message : 'Unknown error',
+        error instanceof Error ? error.stack : undefined,
       );
       throw error;
     }
