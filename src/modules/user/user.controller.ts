@@ -18,7 +18,10 @@ export class UserController {
 
   @Patch('profile')
   @ApiBody({ type: UpdateUserProfileDto })
-  async updateProfile(@CurrentUser() user: any, @Body() body: UpdateUserProfileDto) {
+  async updateProfile(
+    @CurrentUser() user: any,
+    @Body() body: UpdateUserProfileDto,
+  ) {
     return this.userService.updateProfile(user.id, body);
   }
 }

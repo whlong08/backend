@@ -2,7 +2,11 @@ import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from '../src/app.module';
-import { QuestType, QuestDifficulty, QuestCategory } from '../src/entities/quest.entity';
+import {
+  QuestType,
+  QuestDifficulty,
+  QuestCategory,
+} from '../src/entities/quest.entity';
 
 describe('QuestsController (e2e)', () => {
   let app: INestApplication;

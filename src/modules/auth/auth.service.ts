@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-import { Injectable, ConflictException, UnauthorizedException, Inject } from '@nestjs/common';
-=======
 import {
   Injectable,
   ConflictException,
@@ -8,7 +5,6 @@ import {
   Inject,
   BadRequestException,
 } from '@nestjs/common';
->>>>>>> Stashed changes
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -31,10 +27,6 @@ export class AuthService {
   ) {}
 
   async register(email: string, username: string, password: string) {
-<<<<<<< Updated upstream
-    const existing = await this.usersRepository.findOne({ where: [{ email }, { username }] });
-    if (existing) throw new ConflictException('Email or username already exists');
-=======
     if (!password || password.length < 6) {
       throw new BadRequestException(
         'Password is required and must be at least 6 characters',
@@ -45,7 +37,6 @@ export class AuthService {
     });
     if (existing)
       throw new ConflictException('Email or username already exists');
->>>>>>> Stashed changes
     const passwordHash = await bcrypt.hash(password, 12);
     const user = this.usersRepository.create({ email, username, passwordHash });
     await this.usersRepository.save(user);
@@ -84,6 +75,7 @@ export class AuthService {
   }
 
   private sanitizeUser(user: User) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...rest } = user;
     return rest;
   }
